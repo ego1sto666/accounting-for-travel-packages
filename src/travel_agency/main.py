@@ -1,29 +1,49 @@
-"""Точка входа: проверяет подключение к базе данных и выводит каталог туров."""
+"""Точка входа: главное меню, вход и переход в меню нужной роли."""
 
-import sqlite3
-from pathlib import Path
+from constants import ROLE_ADMIN, ROLE_CLIENT, ROLE_MANAGER
+from database.database import database_exists
+from ui.admin_menu import admin_menu
+from ui.auth import login, register
+from ui.client_menu import client_menu
+from ui.common import run_action
+from ui.manager_menu import manager_menu
 
-DB_PATH = Path(__file__).resolve().parents[2] / "database.db"
+ROLE_MENUS = {
+    ROLE_CLIENT: client_menu,
+    ROLE_MANAGER: manager_menu,
+    ROLE_ADMIN: admin_menu,
+}
 
 
 def main():
-    print("Система учета туристических путевок запущена!")
-
-    if not DB_PATH.exists():
+    if not database_exists():
         print("База данных не найдена. Сначала выполните: python init_db.py")
         return
 
-    conn = sqlite3.connect(DB_PATH)
-    conn.execute("PRAGMA foreign_keys = ON")
-    rows = conn.execute(
-        "SELECT name, cost, datetimeStart, seats FROM Tour WHERE isAvailable = 1"
-    ).fetchall()
-    conn.close()
+    print("Система учета туристических путевок")
 
-    print("\nДоступные туры:")
-    for name, cost, start, seats in rows:
-        print(f"  - {name}: {cost:,.0f} руб., начало {start}, мест: {seats}")
+    while True:
+        print("\n===== Главное меню =====")
+        print("1. Вход")
+        print("2. Регистрация")
+        print("0. Выход из программы")
+
+        choice = input("Выберите действие: ").strip()
+        if choice == "1":
+            user = login()
+            if user:
+                ROLE_MENUS[user.user_role](user)
+        elif choice == "2":
+            run_action(register)
+        elif choice == "0":
+            print("До свидания!")
+            break
+        else:
+            print("Нет такого пункта")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except (KeyboardInterrupt, EOFError):
+        print("\nПрограмма завершена")

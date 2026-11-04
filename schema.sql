@@ -88,7 +88,7 @@ INSERT INTO User (login, password_hash, name, surname, patronymic, phone, userRo
 VALUES ('ivanov', '186474c1f2c2f735a54c2cf82ee8e87f2a5cd30940e280029363fecedfc5328c',
         'Иван', 'Иванов', 'Иванович', '+79001112233', 1, 100000.0),
        ('petrova', 'e56b37a242a602bed629c6087c648f8ac1f1772dc3d51b90bc23fc71aea72f34',
-        'Анна', 'Петрова', NULL, '+79004445566', 1, 20000.0),
+        'Анна', 'Петрова', 'Сергеевна', '+79004445566', 1, 20000.0),
        ('manager', '866485796cfa8d7c0cf7111640205b83076433547577511d81f8030ae99ecea5',
         'Олег', 'Смирнов', 'Петрович', '+79007778899', 2, 0.0),
        ('admin', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
