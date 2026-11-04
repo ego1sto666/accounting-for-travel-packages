@@ -6,27 +6,47 @@ actor "Клиент" as Client
 actor "Менеджер" as Manager
 actor "Администратор" as Admin
 
-' Уникальные названия входов без цифр
-Client -- (Вход в личный кабинет)
-Manager -- (Вход для менеджера)
-Admin -- (Вход в панель администратора)
+rectangle "Система учета туристических путевок" {
+    usecase "Регистрация" as UC_Register
+    usecase "Вход в систему" as UC_Login
 
-' Связи для клиента
-(Вход в личный кабинет) -- (Регистрация)
-(Вход в личный кабинет) -- (Просмотр каталога тура)
-(Вход в личный кабинет) -- (Выбор тура)
-(Вход в личный кабинет) -- (Бронирование тура)
-(Вход в личный кабинет) -- (Пополнение баланса)
-(Вход в личный кабинет) -- (Оплата тура)
-(Вход в личный кабинет) -- (Просмотр своих броней)
+    usecase "Просмотр каталога туров" as UC_Catalog
+    usecase "Выбор тура" as UC_Choose
+    usecase "Бронирование тура" as UC_Book
+    usecase "Пополнение баланса" as UC_Balance
+    usecase "Оплата тура" as UC_Pay
+    usecase "Просмотр своих броней" as UC_MyBookings
 
-' Связи для менеджера
-(Вход для менеджера) -- (Потверждение брони)
-(Вход для менеджера) -- (Оформление продажи)
-(Вход для менеджера) -- (Просмотр списка броней)
+    usecase "Подтверждение брони" as UC_Confirm
+    usecase "Оформление продажи" as UC_Sale
+    usecase "Просмотр списка броней" as UC_AllBookings
 
-' Связи для администратора
-(Вход в панель администратора) -- (Управление турами)
-(Вход в панель администратора) -- (Управление пользователями)
+    usecase "Управление турами" as UC_Tours
+    usecase "Управление пользователями" as UC_Users
+}
 
+' Клиент (слева). Регистрация доступна без входа в систему
+Client --> UC_Register
+Client --> UC_Login
+Client --> UC_Catalog
+Client --> UC_Choose
+Client --> UC_Book
+Client --> UC_Balance
+Client --> UC_Pay
+Client --> UC_MyBookings
+
+' Менеджер и администратор (справа)
+UC_Login <-- Manager
+UC_Confirm <-- Manager
+UC_Sale <-- Manager
+UC_AllBookings <-- Manager
+
+UC_Login <-- Admin
+UC_Tours <-- Admin
+UC_Users <-- Admin
+
+note bottom of UC_Login
+  Все функции, кроме регистрации,
+  доступны только после входа в систему
+end note
 @enduml

@@ -1,32 +1,28 @@
+"""Создание базы данных database.db из файла schema.sql."""
+
 import sqlite3
-import os
+from pathlib import Path
 
+PROJECT_DIR = Path(__file__).resolve().parent
+DB_PATH = PROJECT_DIR / "database.db"
+SCHEMA_PATH = PROJECT_DIR / "schema.sql"
 
-DB_NAME = "database.db"
-SCHEMA_FILE = "schema.sql"
 
 def init_database():
-   
-    if not os.path.exists(SCHEMA_FILE):
-        print(f"Ошибка: файл {SCHEMA_FILE} не найден в корне проекта!")
+    if not SCHEMA_PATH.exists():
+        print(f"Ошибка: файл {SCHEMA_PATH.name} не найден в корне проекта!")
         return
 
-   
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    print(f"Успешное подключение к базе данных: {DB_NAME}")
+    sql_script = SCHEMA_PATH.read_text(encoding="utf-8")
 
-    
-    with open(SCHEMA_FILE, "r", encoding="utf-8") as f:
-        sql_script = f.read()
-
-   
-    cursor.executescript(sql_script)
-    
-   
+    conn = sqlite3.connect(DB_PATH)
+    print(f"Подключение к базе данных: {DB_PATH.name}")
+    conn.executescript(sql_script)
     conn.commit()
     conn.close()
-    print("База данных успешно создана и заполнена тестовыми данными из schema.sql!")
+
+    print("База данных создана и заполнена тестовыми данными из schema.sql")
+
 
 if __name__ == "__main__":
     init_database()
