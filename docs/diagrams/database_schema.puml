@@ -1,0 +1,55 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "UserRole" as UserRole {
+    * userRoleID : INTEGER <<PK>>
+    --
+    * name : TEXT <<UNIQUE>>
+}
+
+entity "User" as User {
+    * userID : INTEGER <<PK>>
+    --
+    * login : TEXT <<UNIQUE>>
+    * password_hash : TEXT
+    * name : TEXT
+    * surname : TEXT
+    patronymic : TEXT
+    phone : TEXT
+    * userRole : INTEGER <<FK>>
+    * balance : REAL
+}
+
+entity "Tour" as Tour {
+    * tourID : INTEGER <<PK>>
+    --
+    * name : TEXT
+    * cost : REAL
+    * datetimeStart : TEXT
+    * datetimeEnd : TEXT
+    * seats : INTEGER
+    * isAvailable : INTEGER
+    description : TEXT
+}
+
+entity "BookingStatus" as BookingStatus {
+    * statusID : INTEGER <<PK>>
+    --
+    * name : TEXT <<UNIQUE>>
+}
+
+entity "Booking" as Booking {
+    * bookingID : INTEGER <<PK>>
+    --
+    * tourID : INTEGER <<FK>>
+    * userID : INTEGER <<FK>>
+    * statusID : INTEGER <<FK>>
+    * datetimeBooking : TEXT
+}
+
+UserRole ||--o{ User : "1:N"
+User ||--o{ Booking : "1:N"
+Tour ||--o{ Booking : "1:N"
+BookingStatus ||--o{ Booking : "1:N"
+@enduml
