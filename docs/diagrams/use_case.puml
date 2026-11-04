@@ -45,8 +45,5 @@ UC_Login <-- Admin
 UC_Tours <-- Admin
 UC_Users <-- Admin
 
-note bottom of UC_Login
-  Все функции, кроме регистрации,
-  доступны только после входа в систему
-end note
+
 @enduml
