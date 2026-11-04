@@ -77,7 +77,7 @@
 
 ### ER-диаграмма
 
-Построена в PlantUML: [database_schema.puml](docs/diagrams/database_schema.puml).
+Диаграмма отражает структуру из [schema.sql](schema.sql). Текстовая версия в PlantUML: [database_schema.puml](docs/diagrams/database_schema.puml).
 
 ![ER-диаграмма базы данных](docs/diagrams/database_schema.png)
 
