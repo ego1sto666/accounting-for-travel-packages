@@ -5,7 +5,8 @@ from getpass import getpass
 from models.user import User
 from services import tour_service, user_service
 from ui.common import (print_tours, print_users, read_float, read_int,
-                       read_optional, read_text, read_with_default, run_action)
+                       read_optional, read_text, read_with_default, run_action,
+                       to_float)
 
 
 def admin_menu(user: User):
@@ -57,7 +58,8 @@ def show_tours(admin: User):
 
 
 def add_tour(admin: User):
-    print("Даты вводятся в формате ГГГГ-ММ-ДД ЧЧ:ММ, например 2027-03-01 10:00")
+    print("Дату можно ввести как 2027-03-01 10:00 или 01.03.2027 10:00 "
+          "(время можно не писать)")
     name = read_text("Название: ")
     cost = read_float("Стоимость: ")
     start = read_text("Дата начала: ")
@@ -76,7 +78,7 @@ def edit_tour(admin: User):
     print("Enter — оставить текущее значение")
 
     name = read_with_default("Название", tour.name)
-    cost = float(read_with_default("Стоимость", f"{tour.cost:g}").replace(",", "."))
+    cost = to_float(read_with_default("Стоимость", f"{tour.cost:g}"))
     start = read_with_default("Дата начала", tour.datetime_start)
     end = read_with_default("Дата окончания", tour.datetime_end)
     seats_text = read_with_default("Количество мест", tour.seats)

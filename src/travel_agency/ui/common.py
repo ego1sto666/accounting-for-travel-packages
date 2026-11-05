@@ -24,12 +24,17 @@ def read_int(prompt: str) -> int:
     return int(value)
 
 
-def read_float(prompt: str) -> float:
-    value = input(prompt).strip().replace(",", ".")
+def to_float(text: str) -> float:
+    """Число из строки: допускаются пробелы (45 000) и запятая (99,5)."""
+    value = text.replace(" ", "").replace(",", ".")
     try:
         return float(value)
     except ValueError:
         raise ValueError("Нужно ввести число") from None
+
+
+def read_float(prompt: str) -> float:
+    return to_float(input(prompt))
 
 
 def read_with_default(prompt: str, current) -> str:
