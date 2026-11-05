@@ -9,14 +9,24 @@ from repositories import booking_repository, tour_repository
 from services.user_service import check_role
 
 
+# Форматы, в которых можно ввести дату. Без времени считается 00:00.
+INPUT_FORMATS = (DATETIME_FORMAT, "%Y-%m-%d", "%d.%m.%Y %H:%M", "%d.%m.%Y")
+
+
 def _parse_datetime(text: str, field: str) -> datetime:
-    try:
-        return datetime.strptime(text.strip(), DATETIME_FORMAT)
-    except ValueError:
-        raise ValueError(f"{field}: нужен формат ГГГГ-ММ-ДД ЧЧ:ММ") from None
+    for fmt in INPUT_FORMATS:
+        try:
+            return datetime.strptime(text.strip(), fmt)
+        except ValueError:
+            pass
+    raise ValueError(
+        f"{field}: введите дату как 2027-03-01 10:00 или 01.03.2027 10:00"
+    )
 
 
-def _validate(name: str, cost: float, start: str, end: str, seats: int):
+def _validate(name: str, cost: float, start: str, end: str,
+              seats: int) -> tuple[str, str]:
+    """Проверяет данные тура и возвращает даты в едином формате."""
     if not name.strip():
         raise ValueError("Название тура не может быть пустым")
     if cost < 0:
@@ -27,6 +37,7 @@ def _validate(name: str, cost: float, start: str, end: str, seats: int):
     end_dt = _parse_datetime(end, "Дата окончания")
     if end_dt <= start_dt:
         raise ValueError("Дата окончания должна быть позже даты начала")
+    return start_dt.strftime(DATETIME_FORMAT), end_dt.strftime(DATETIME_FORMAT)
 
 
 def _with_free_seats(tour: Tour) -> Tour:
@@ -73,9 +84,9 @@ def get_all_tours(admin: User) -> list[Tour]:
 def create_tour(admin: User, name: str, cost: float, start: str, end: str,
                 seats: int, description: str | None) -> int:
     check_role(admin, ROLE_ADMIN)
-    _validate(name, cost, start, end, seats)
+    start, end = _validate(name, cost, start, end, seats)
     return tour_repository.create(
-        name.strip(), cost, start.strip(), end.strip(),
+        name.strip(), cost, start, end,
         seats, 1, description or None,
     )
 
@@ -85,7 +96,7 @@ def update_tour(admin: User, tour_id: int, name: str, cost: float,
                 description: str | None):
     check_role(admin, ROLE_ADMIN)
     get_tour(tour_id)
-    _validate(name, cost, start, end, seats)
+    start, end = _validate(name, cost, start, end, seats)
 
     taken = booking_repository.count_active_by_tour(tour_id)
     if seats < taken:
@@ -94,7 +105,7 @@ def update_tour(admin: User, tour_id: int, name: str, cost: float,
         )
 
     tour_repository.update(
-        tour_id, name.strip(), cost, start.strip(), end.strip(),
+        tour_id, name.strip(), cost, start, end,
         seats, 1 if is_available else 0, description or None,
     )
 
